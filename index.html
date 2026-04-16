@@ -113,6 +113,53 @@
     font-size:0.9rem;
     }
 
+    #more-info-btn{
+    margin-top:25px;
+    font-size:1rem;
+    }
+
+    .modal-overlay{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,0.55);
+    z-index:1000;
+    justify-content:center;
+    align-items:center;
+    }
+
+    .modal-overlay.active{
+    display:flex;
+    }
+
+    .modal-box{
+    background:white;
+    color:#333;
+    max-width:520px;
+    width:90%;
+    padding:36px 32px;
+    border-radius:10px;
+    box-shadow:0 8px 30px rgba(0,0,0,0.2);
+    position:relative;
+    }
+
+    .modal-box h3{
+    margin-top:0;
+    color:#0b6b38;
+    }
+
+    .modal-close{
+    position:absolute;
+    top:12px;
+    right:16px;
+    background:none;
+    border:none;
+    font-size:1.4rem;
+    cursor:pointer;
+    color:#666;
+    padding:4px 8px;
+    }
+
 </style>
 </head>
 
@@ -125,7 +172,17 @@
 
     <p>Fast, precise crop protection with airplane and drone spraying services</p>
 
+    <button id="more-info-btn">More Info</button>
+
     </header>
+
+    <div id="info-modal" class="modal-overlay" role="dialog" aria-modal="true">
+    <div class="modal-box">
+        <button class="modal-close" id="modal-close-btn" aria-label="Close">&times;</button>
+        <h3>About Our Services</h3>
+        <p id="modal-message">Loading...</p>
+    </div>
+    </div>
 
 
     <section class="container">
@@ -271,6 +328,30 @@
     © 2026 Aerial Agro Services – Agricultural Fumigation by Plane & Drone
 
     </footer>
+
+
+    <script>
+    const modal = document.getElementById('info-modal');
+    const modalMessage = document.getElementById('modal-message');
+
+    document.getElementById('more-info-btn').addEventListener('click', () => {
+        modalMessage.textContent = 'Loading...';
+        modal.classList.add('active');
+
+        fetch('/api/more-info')
+        .then(res => res.json())
+        .then(data => { modalMessage.textContent = data.message; })
+        .catch(() => { modalMessage.textContent = 'Could not load info. Please try again.'; });
+    });
+
+    document.getElementById('modal-close-btn').addEventListener('click', () => {
+        modal.classList.remove('active');
+    });
+
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) modal.classList.remove('active');
+    });
+    </script>
 
 </body>
 </html>
